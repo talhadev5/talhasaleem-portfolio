@@ -1,0 +1,49 @@
+name: talha_portfilo
+description: "Senior Flutter Developer — premium portfolio built with Flutter Web."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  # Routing
+  go_router: ^14.6.2
+
+  # State management
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+
+  # Typography
+  google_fonts: ^6.2.1
+
+  # Links (store links, mailto, tel, linkedin)
+  url_launcher: ^6.3.1
+
+  # Scroll-triggered / micro-interaction animations
+  flutter_animate: ^4.5.2
+  visibility_detector: ^0.4.0+2
+
+  # Brand icons for the Tools & Technologies section
+  simple_icons: ^16.23.0
+
+  # Contact form email delivery (Formspree REST API)
+  http: ^1.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/images/projects/
