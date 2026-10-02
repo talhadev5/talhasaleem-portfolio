@@ -1,5 +1,5 @@
+import '../theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 
 /// Subtle animated glow blobs + grid pattern used behind the hero and
 /// other key sections. Kept lightweight to stay tasteful, not distracting.
@@ -30,37 +30,55 @@ class _GradientBackgroundState extends State<GradientBackground> with SingleTick
 
   @override
   Widget build(BuildContext context) {
+    // Background layers are Positioned.fill (sized relative to the Stack's
+    // resolved size) while `child` is the only non-positioned child, so the
+    // Stack sizes itself to the child's intrinsic size. Using
+    // `StackFit.expand` here previously forced every child — including
+    // `child` — to a tight size; inside a scrollable (unbounded height,
+    // e.g. the mobile/tablet hero) that meant an invalid infinite-tight
+    // constraint and a blank crashed render.
     return Stack(
-      fit: StackFit.expand,
       children: [
-        Container(color: AppColors.background),
-        AnimatedBuilder(
-          animation: _controller,
-          builder: (context, _) {
-            final t = _controller.value;
-            return Stack(
-              children: [
-                Positioned(
-                  top: -100 + (t * 35),
-                  right: -80,
-                  child: _Blob(
-                    color: AppColors.glowPurple.withValues(alpha: 0.16 * widget.intensity),
-                    size: 480,
+        Positioned.fill(child: ColoredBox(color: context.colors.background)),
+        Positioned.fill(
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, _) {
+              final t = _controller.value;
+              return Stack(
+                children: [
+                  Positioned(
+                    top: -100 + (t * 35),
+                    right: -80,
+                    child: _Blob(
+                      color: context.colors.primary.withValues(alpha: 0.20 * widget.intensity),
+                      size: 480,
+                    ),
                   ),
-                ),
-                Positioned(
-                  bottom: -140,
-                  left: -120 - (t * 25),
-                  child: _Blob(
-                    color: AppColors.glowBlue.withValues(alpha: 0.14 * widget.intensity),
-                    size: 500,
+                  Positioned(
+                    bottom: -140,
+                    left: -120 - (t * 25),
+                    child: _Blob(
+                      color: context.colors.secondary.withValues(alpha: 0.18 * widget.intensity),
+                      size: 500,
+                    ),
                   ),
-                ),
-              ],
-            );
-          },
+                  Positioned(
+                    top: 180 - (t * 40),
+                    right: 40 + (t * 30),
+                    child: _Blob(
+                      color: context.colors.secondary.withValues(alpha: 0.10 * widget.intensity),
+                      size: 320,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
-        CustomPaint(painter: _GridPainter(opacity: 0.03 * widget.intensity), size: Size.infinite),
+        Positioned.fill(
+          child: CustomPaint(painter: _GridPainter(opacity: 0.03 * widget.intensity)),
+        ),
         if (widget.child != null) widget.child!,
       ],
     );

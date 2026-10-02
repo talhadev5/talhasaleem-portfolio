@@ -1,5 +1,5 @@
+import '../../../../core/theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 
 class CategoryFilterChip extends StatefulWidget {
@@ -34,14 +34,14 @@ class _CategoryFilterChipState extends State<CategoryFilterChip> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
-            color: active ? AppColors.primary : (_hovered ? AppColors.glassFill : Colors.transparent),
+            color: active ? context.colors.primary : (_hovered ? context.colors.glassFill : Colors.transparent),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: active ? AppColors.primary : AppColors.glassBorder),
+            border: Border.all(color: active ? context.colors.primary : context.colors.glassBorder),
           ),
           child: Text(
             widget.label,
-            style: AppTextStyles.bodySmall.copyWith(
-              color: active ? Colors.white : AppColors.textSecondary,
+            style: AppTextStyles.bodySmall(context).copyWith(
+              color: active ? context.colors.onAccent : context.colors.textSecondary,
               fontWeight: FontWeight.w600,
             ),
           ),

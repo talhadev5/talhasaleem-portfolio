@@ -1,26 +1,73 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/app_nav_bar.dart';
-import '../../../../core/widgets/glass_card.dart';
-import '../../../../core/widgets/gradient_background.dart';
-import '../../../../core/widgets/scroll_reveal.dart';
-import '../../../../core/widgets/section_container.dart';
+import '../../../../core/widgets/app_page_scaffold.dart';
 import '../../domain/entities/project.dart';
+import '../widgets/case_study/cs_challenges.dart';
+import '../widgets/case_study/cs_closing.dart';
+import '../widgets/case_study/cs_contribution.dart';
+import '../widgets/case_study/cs_features.dart';
+import '../widgets/case_study/cs_gallery.dart';
+import '../widgets/case_study/cs_hero.dart';
+import '../widgets/case_study/cs_outcomes.dart';
+import '../widgets/case_study/cs_overview.dart';
+import '../widgets/case_study/cs_problem_solution.dart';
+import '../widgets/case_study/cs_section.dart';
+import '../widgets/case_study/cs_section_nav.dart';
+import '../widgets/case_study/cs_technical.dart';
+import '../widgets/case_study/cs_user_journeys.dart';
 
-class ProjectDetailPage extends StatelessWidget {
+/// Full case study for a single project: hero, overview, contribution,
+/// problem/solution, features, user journeys, technical implementation,
+/// challenges, gallery and outcomes — each section renders nothing when
+/// its data is empty, so thinner projects naturally get a shorter page
+/// instead of padded filler. Desktop gets a sticky section nav rail;
+/// mobile gets an inline scrollable tab row.
+class ProjectDetailPage extends StatefulWidget {
   const ProjectDetailPage({super.key, required this.projectId});
 
   final String projectId;
 
   @override
+  State<ProjectDetailPage> createState() => _ProjectDetailPageState();
+}
+
+class _ProjectDetailPageState extends State<ProjectDetailPage> {
+  final Map<String, GlobalKey> _keys = {};
+
+  GlobalKey _keyFor(String id) => _keys.putIfAbsent(id, GlobalKey.new);
+
+  List<CsSection> _sectionsFor(Project project) {
+    return [
+      const CsSection(id: 'cs-overview', label: 'Overview', icon: Icons.info_outline_rounded),
+      if (project.myContribution.isNotEmpty)
+        const CsSection(id: 'cs-contribution', label: 'Contribution', icon: Icons.person_outline_rounded),
+      if (project.problem != null && project.solution != null)
+        const CsSection(id: 'cs-problem', label: 'Problem & Solution', icon: Icons.flag_outlined),
+      if (project.features.isNotEmpty) const CsSection(id: 'cs-features', label: 'Features', icon: Icons.star_outline_rounded),
+      if (project.userJourneys.isNotEmpty) const CsSection(id: 'cs-journeys', label: 'User Journeys', icon: Icons.route_outlined),
+      if (project.techStack.isNotEmpty) const CsSection(id: 'cs-technical', label: 'Technical', icon: Icons.code_rounded),
+      if (project.challenges.isNotEmpty) const CsSection(id: 'cs-challenges', label: 'Challenges', icon: Icons.warning_amber_rounded),
+      if (project.screenshots.isNotEmpty) const CsSection(id: 'cs-gallery', label: 'Gallery', icon: Icons.photo_library_outlined),
+      if (project.outcomes.isNotEmpty) const CsSection(id: 'cs-outcomes', label: 'Outcomes', icon: Icons.rocket_launch_outlined),
+    ];
+  }
+
+  @override
+  void dispose() {
+    for (final entry in _keys.entries) {
+      SectionScrollRegistry.unregister(entry.key, entry.value);
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final project = ServiceLocator.getProjectById(projectId);
+    final project = ServiceLocator.getProjectById(widget.projectId);
 
     if (project == null) {
       return Scaffold(
@@ -41,306 +88,45 @@ class ProjectDetailPage extends StatelessWidget {
     final isDesktop = Responsive.isDesktop(context);
     final allProjects = ServiceLocator.projectRepository.getAllProjects();
     final currentIndex = allProjects.indexWhere((p) => p.id == project.id);
-    final nextProject = allProjects.isEmpty
-        ? null
-        : allProjects[(currentIndex + 1) % allProjects.length];
+    final nextProject = allProjects.isEmpty ? null : allProjects[(currentIndex + 1) % allProjects.length];
 
-    return Scaffold(
-      appBar: const AppNavBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _DetailBanner(project: project),
-            SectionContainer(
-              verticalPadding: 40,
-              child: Flex(
-                direction: isDesktop ? Axis.horizontal : Axis.vertical,
-                crossAxisAlignment: isDesktop ? CrossAxisAlignment.start : CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    flex: isDesktop ? 7 : 0,
-                    child: ScrollReveal(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Overview', style: AppTextStyles.cardTitle),
-                          const SizedBox(height: 12),
-                          Text(
-                            project.description.isNotEmpty ? project.description : 'Add feature details here.',
-                            style: AppTextStyles.body,
-                          ),
-                          const SizedBox(height: 28),
-                          Text('Key Features', style: AppTextStyles.cardTitle),
-                          const SizedBox(height: 14),
-                          if (project.features.isEmpty)
-                            Text('Add feature details here.', style: AppTextStyles.body)
-                          else
-                            ...project.features.map(
-                              (feature) => Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(top: 3),
-                                      child: Icon(Icons.check_circle_rounded, size: 18, color: AppColors.primary),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(child: Text(feature, style: AppTextStyles.body)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: isDesktop ? 40 : 0, height: isDesktop ? 0 : 28),
-                  Expanded(
-                    flex: isDesktop ? 4 : 0,
-                    child: ScrollReveal(
-                      delay: const Duration(milliseconds: 120),
-                      child: GlassCard(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Tech Stack', style: AppTextStyles.cardTitle.copyWith(fontSize: 16)),
-                            const SizedBox(height: 12),
-                            if (project.techStack.isEmpty)
-                              Text('Add feature details here.', style: AppTextStyles.bodySmall)
-                            else
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: project.techStack
-                                    .map((tech) => Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.background,
-                                            borderRadius: BorderRadius.circular(999),
-                                            border: Border.all(color: AppColors.glassBorder),
-                                          ),
-                                          child: Text(tech, style: AppTextStyles.bodySmall),
-                                        ))
-                                    .toList(),
-                              ),
-                            const SizedBox(height: 24),
-                            Text('Live On', style: AppTextStyles.cardTitle.copyWith(fontSize: 16)),
-                            const SizedBox(height: 12),
-                            if (project.hasNoPublicLink || project.storeLinks.isEmpty)
-                              Text(
-                                'Showcase project — no public store listing yet.',
-                                style: AppTextStyles.bodySmall,
-                              )
-                            else
-                              Column(
-                                children: project.storeLinks
-                                    .map((link) => Padding(
-                                          padding: const EdgeInsets.only(bottom: 12),
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: PrimaryButton(
-                                              label: link.platform == StorePlatform.ios ? 'App Store' : 'Google Play',
-                                              icon: link.platform == StorePlatform.ios ? Icons.apple : Icons.android_rounded,
-                                              onPressed: () => launchUrl(Uri.parse(link.url), webOnlyWindowName: '_blank'),
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (nextProject != null) _NextProjectBar(project: nextProject),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DetailBanner extends StatelessWidget {
-  const _DetailBanner({required this.project});
-  final Project project;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 320,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Real screenshot goes at assets/images/projects/<id>_banner.jpg —
-          // falls back to the branded gradient until it's added.
-          Image.asset(
-            'assets/images/projects/${project.id}_banner.jpg',
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => const GradientBackground(intensity: 0.7),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [AppColors.background.withValues(alpha: 0.55), AppColors.background.withValues(alpha: 0.92)],
-              ),
-            ),
-          ),
-          SectionContainer(
-            verticalPadding: 0,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const _AnimatedBackLink(),
-                const SizedBox(height: 20),
-                Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 12,
-                  runSpacing: 8,
-                  children: [
-                    Text(project.category.label.toUpperCase(), style: AppTextStyles.cardSubtitle),
-                    _PlatformBadge(label: project.platformLabel),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(project.name, style: AppTextStyles.sectionTitle(context)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PlatformBadge extends StatelessWidget {
-  const _PlatformBadge({required this.label});
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    IconData icon;
-    switch (label) {
-      case 'iOS':
-        icon = Icons.apple;
-      case 'Android':
-        icon = Icons.android_rounded;
-      case 'iOS & Android':
-        icon = Icons.phone_iphone_rounded;
-      default:
-        icon = Icons.visibility_outlined;
+    // Re-registering on every build is intentional and cheap: go_router
+    // reuses this State when navigating project-to-project (same route
+    // pattern, different path param), so initState alone would only run
+    // once and go stale for the second project onward.
+    final sections = _sectionsFor(project);
+    for (final s in sections) {
+      SectionScrollRegistry.register(s.id, _keyFor(s.id));
     }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.glassFill,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.glassBorder),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+
+    Widget section(String id, Widget child) => KeyedSubtree(key: _keyFor(id), child: child);
+
+    return AppPageScaffold(
+      overlay: isDesktop ? CsSectionNavRail(sections: sections) : null,
+      body: Column(
         children: [
-          Icon(icon, size: 13, color: AppColors.textSecondary),
-          const SizedBox(width: 6),
-          Text(label, style: AppTextStyles.bodySmall),
+          CsHero(project: project),
+          if (!isDesktop)
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                Responsive.pageHorizontalPadding(context).left,
+                20,
+                Responsive.pageHorizontalPadding(context).right,
+                4,
+              ),
+              child: CsSectionNavTabs(sections: sections),
+            ),
+          section('cs-overview', CsOverview(project: project)),
+          section('cs-contribution', CsContribution(project: project)),
+          section('cs-problem', CsProblemSolution(project: project)),
+          section('cs-features', CsFeatures(project: project)),
+          section('cs-journeys', CsUserJourneys(project: project)),
+          section('cs-technical', CsTechnical(project: project)),
+          section('cs-challenges', CsChallenges(project: project)),
+          section('cs-gallery', CsGallery(project: project)),
+          section('cs-outcomes', CsOutcomes(project: project)),
+          CsClosing(project: project, nextProject: nextProject),
         ],
-      ),
-    );
-  }
-}
-
-class _AnimatedBackLink extends StatefulWidget {
-  const _AnimatedBackLink();
-
-  @override
-  State<_AnimatedBackLink> createState() => _AnimatedBackLinkState();
-}
-
-class _AnimatedBackLinkState extends State<_AnimatedBackLink> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: () => context.go('/projects'),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedSlide(
-              duration: const Duration(milliseconds: 180),
-              offset: _hovered ? const Offset(-0.15, 0) : Offset.zero,
-              child: Icon(Icons.arrow_back_rounded, size: 16, color: _hovered ? AppColors.primary : AppColors.textMuted),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              'All Projects',
-              style: AppTextStyles.bodySmall.copyWith(color: _hovered ? AppColors.primary : AppColors.textMuted),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NextProjectBar extends StatefulWidget {
-  const _NextProjectBar({required this.project});
-  final Project project;
-
-  @override
-  State<_NextProjectBar> createState() => _NextProjectBarState();
-}
-
-class _NextProjectBarState extends State<_NextProjectBar> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: () => context.go('/projects/${widget.project.id}'),
-        child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: _hovered ? AppColors.surfaceElevated : AppColors.surface,
-            border: const Border(top: BorderSide(color: AppColors.divider)),
-          ),
-          child: SectionContainer(
-            verticalPadding: 28,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Next Project', style: AppTextStyles.bodySmall.copyWith(color: AppColors.primary)),
-                    const SizedBox(height: 4),
-                    Text(widget.project.name, style: AppTextStyles.cardTitle),
-                  ],
-                ),
-                AnimatedSlide(
-                  duration: const Duration(milliseconds: 200),
-                  offset: _hovered ? const Offset(0.15, 0) : Offset.zero,
-                  child: const Icon(Icons.arrow_forward_rounded, color: AppColors.primary),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

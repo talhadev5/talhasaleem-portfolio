@@ -1,10 +1,10 @@
+import '../theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
-import '../theme/app_colors.dart';
 
-/// Circular profile photo with an electric blue & violet gradient glow ring.
-/// Loads [AppConstants.profilePhotoAsset]; falls back to an electric-themed
-/// placeholder avatar if the asset is not available.
+/// Circular profile photo with a brand-gradient glow ring. Loads
+/// [AppConstants.profilePhotoAsset]; falls back to a themed placeholder
+/// avatar if the asset is not available.
 class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({super.key, this.size = 220});
 
@@ -17,22 +17,15 @@ class ProfileAvatar extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF38BDF8), // Electric cyan/blue
-            Color(0xFF8B5CF6), // Electric violet
-          ],
-        ),
+        gradient: context.colors.primaryGradient,
         boxShadow: [
           BoxShadow(
-            color: AppColors.glowBlue.withValues(alpha: 0.38),
+            color: context.colors.secondary.withValues(alpha: 0.38),
             blurRadius: 44,
             spreadRadius: 2,
           ),
           BoxShadow(
-            color: AppColors.glowPurple.withValues(alpha: 0.28),
+            color: context.colors.primary.withValues(alpha: 0.28),
             blurRadius: 84,
             spreadRadius: 8,
           ),
@@ -45,8 +38,8 @@ class ProfileAvatar extends StatelessWidget {
       ),
       child: Container(
         margin: const EdgeInsets.all(3.5),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
           shape: BoxShape.circle,
         ),
         child: ClipOval(
@@ -67,15 +60,11 @@ class _PlaceholderAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF1E1B4B), // Deep indigo
-            Color(0xFF0F172A), // Deep slate/black
-            Color(0xFF1E293B),
-          ],
+          colors: [context.colors.surfaceElevated, context.colors.surface],
         ),
       ),
       alignment: Alignment.center,
@@ -89,16 +78,16 @@ class _PlaceholderAvatar extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  AppColors.primary.withValues(alpha: 0.25),
+                  context.colors.primary.withValues(alpha: 0.25),
                   Colors.transparent,
                 ],
               ),
             ),
           ),
-          const Icon(
+          Icon(
             Icons.person_rounded,
             size: 96,
-            color: Color(0xFFC7D2FE), // Soft electric lavender
+            color: context.colors.textSecondary,
           ),
         ],
       ),

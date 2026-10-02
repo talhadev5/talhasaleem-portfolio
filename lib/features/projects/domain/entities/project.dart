@@ -27,6 +27,58 @@ class StoreLink extends Equatable {
   List<Object?> get props => [platform, url];
 }
 
+/// One named workflow through the app (e.g. "Booking a pickup"), shown as
+/// a numbered step list in the case study. Only included for projects
+/// where a real workflow is evident from the actual feature set.
+class UserJourney extends Equatable {
+  const UserJourney({required this.title, required this.steps});
+
+  final String title;
+  final List<String> steps;
+
+  @override
+  List<Object?> get props => [title, steps];
+}
+
+/// A technology choice plus why it mattered for this specific app —
+/// grounded in [Project.techStack], not generic tech-blurb filler.
+class TechDecision extends Equatable {
+  const TechDecision({required this.title, required this.rationale});
+
+  final String title;
+  final String rationale;
+
+  @override
+  List<Object?> get props => [title, rationale];
+}
+
+/// An engineering challenge the app's own feature set genuinely implies,
+/// paired with how the implementation addresses it. Kept conservative —
+/// omitted entirely for projects where this can't be honestly grounded
+/// in real data.
+class Challenge extends Equatable {
+  const Challenge({required this.challenge, required this.solution});
+
+  final String challenge;
+  final String solution;
+
+  @override
+  List<Object?> get props => [challenge, solution];
+}
+
+/// A single gallery image with its caption. `assetPath` follows the
+/// existing `assets/images/projects/<id>_<n>.jpg` convention — the
+/// gallery section simply doesn't render until real files exist there.
+class ProjectScreenshot extends Equatable {
+  const ProjectScreenshot({required this.assetPath, required this.caption});
+
+  final String assetPath;
+  final String caption;
+
+  @override
+  List<Object?> get props => [assetPath, caption];
+}
+
 /// Core domain entity representing a single shipped app in the portfolio.
 class Project extends Equatable {
   const Project({
@@ -39,6 +91,16 @@ class Project extends Equatable {
     required this.techStack,
     required this.storeLinks,
     this.hasNoPublicLink = false,
+    this.websiteUrl,
+    this.githubUrl,
+    this.myContribution = '',
+    this.problem,
+    this.solution,
+    this.userJourneys = const [],
+    this.techDecisions = const [],
+    this.challenges = const [],
+    this.outcomes = const [],
+    this.screenshots = const [],
   });
 
   final String id;
@@ -57,6 +119,36 @@ class Project extends Equatable {
   /// True for apps like SympAi that are showcase-only, no public store link.
   final bool hasNoPublicLink;
 
+  /// Public marketing/live-product site, when one exists independent of
+  /// the app stores. Null for every project today — no site currently
+  /// records one.
+  final String? websiteUrl;
+
+  /// Public repository, only when one is genuinely open source. Null for
+  /// every project today.
+  final String? githubUrl;
+
+  /// Role/responsibility statement for the case study's "My Contribution"
+  /// section.
+  final String myContribution;
+
+  /// The user/business problem that motivated the product. Null when not
+  /// meaningfully distinct from [description] for a simple utility app.
+  final String? problem;
+
+  /// How the app addresses [problem].
+  final String? solution;
+
+  final List<UserJourney> userJourneys;
+  final List<TechDecision> techDecisions;
+  final List<Challenge> challenges;
+
+  /// Capability/delivery statements, e.g. "Shipped to the App Store with
+  /// live StoreKit subscriptions" — never a fabricated metric.
+  final List<String> outcomes;
+
+  final List<ProjectScreenshot> screenshots;
+
   /// "iOS", "Android", "iOS & Android" or "Showcase", for the detail
   /// page platform badge.
   String get platformLabel {
@@ -68,5 +160,25 @@ class Project extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, category, tagline, description, features, techStack, storeLinks, hasNoPublicLink];
+  List<Object?> get props => [
+        id,
+        name,
+        category,
+        tagline,
+        description,
+        features,
+        techStack,
+        storeLinks,
+        hasNoPublicLink,
+        websiteUrl,
+        githubUrl,
+        myContribution,
+        problem,
+        solution,
+        userJourneys,
+        techDecisions,
+        challenges,
+        outcomes,
+        screenshots,
+      ];
 }

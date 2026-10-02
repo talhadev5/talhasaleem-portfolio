@@ -7,8 +7,8 @@ enum DeviceType { mobile, tablet, desktop }
 class Responsive {
   Responsive._();
 
-  static const double mobileMax = 699;
-  static const double tabletMax = 1099;
+  static const double mobileMax = 599;
+  static const double tabletMax = 1023;
   static const double contentMaxWidth = 1200;
 
   static DeviceType deviceType(BuildContext context) {

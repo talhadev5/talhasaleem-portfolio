@@ -1,7 +1,7 @@
+import '../../../../core/theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -83,12 +83,12 @@ class _ContactFormState extends State<ContactForm> {
                   width: double.infinity,
                   child: Center(
                     child: state.isSubmitting
-                        ? const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16),
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                             child: SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2.4, color: AppColors.primary),
+                              child: CircularProgressIndicator(strokeWidth: 2.4, color: context.colors.primary),
                             ),
                           )
                         : PrimaryButton(
@@ -128,21 +128,21 @@ class _FormField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTextStyles.bodySmall.copyWith(color: AppColors.textSecondary)),
+        Text(label, style: AppTextStyles.bodySmall(context).copyWith(color: context.colors.textSecondary)),
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
           maxLines: maxLines,
           validator: validator,
-          style: AppTextStyles.body.copyWith(color: AppColors.textPrimary),
-          cursorColor: AppColors.primary,
+          style: AppTextStyles.body(context).copyWith(color: context.colors.textPrimary),
+          cursorColor: context.colors.primary,
           decoration: InputDecoration(
             filled: true,
-            fillColor: AppColors.background,
+            fillColor: context.colors.background,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.glassBorder)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.glassBorder)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primary)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: context.colors.glassBorder)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: context.colors.glassBorder)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: context.colors.primary)),
             errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.redAccent)),
           ),
         ),
@@ -171,7 +171,7 @@ class _InlineMessage extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: color),
           const SizedBox(width: 10),
-          Expanded(child: Text(text, style: AppTextStyles.bodySmall.copyWith(color: color))),
+          Expanded(child: Text(text, style: AppTextStyles.bodySmall(context).copyWith(color: color))),
         ],
       ),
     ).animate().fadeIn(duration: 250.ms).slideY(begin: -0.2, end: 0, duration: 250.ms);
@@ -189,16 +189,16 @@ class _SuccessCard extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.14), shape: BoxShape.circle),
-            child: const Icon(Icons.check_rounded, color: AppColors.primary, size: 32),
+            decoration: BoxDecoration(color: context.colors.primary.withValues(alpha: 0.14), shape: BoxShape.circle),
+            child: Icon(Icons.check_rounded, color: context.colors.primary, size: 32),
           ),
           const SizedBox(height: 18),
-          Text('Message sent', style: AppTextStyles.cardTitle),
+          Text('Message sent', style: AppTextStyles.cardTitle(context)),
           const SizedBox(height: 8),
           Text(
             'Thanks for reaching out — I\'ll get back to you shortly.',
             textAlign: TextAlign.center,
-            style: AppTextStyles.body,
+            style: AppTextStyles.body(context),
           ),
         ],
       ),

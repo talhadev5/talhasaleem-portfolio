@@ -31,28 +31,6 @@ class AppConstants {
     'iOS & Android',
     'Concept-to-Store Launch',
   ];
-
-  /// Flat, uniform-chip skill list for the Core Skills section.
-  static const List<String> coreSkills = [
-    'Flutter',
-    'Dart',
-    'Clean Architecture',
-    'BLoC',
-    'GetX',
-    'Provider',
-    'Riverpod',
-    'REST API Integration',
-    'Firebase',
-    'WebSockets',
-    'WebRTC',
-    'In-App Purchases',
-    'StoreKit / Google Play Billing',
-    'Stripe',
-    'PayPal',
-    'Google & Apple Maps',
-    'AI/ML Integration',
-    'CI/CD Pipelines',
-  ];
 }
 
 /// Shared row model for both the Experience timeline and the

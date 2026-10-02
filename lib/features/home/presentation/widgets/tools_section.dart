@@ -1,6 +1,6 @@
+import '../../../../core/theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_icons/simple_icons.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -90,20 +90,20 @@ class _ToolTileState extends State<_ToolTile> {
           height: 92,
           child: GlassCard(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            borderColor: _hovered ? AppColors.primary.withValues(alpha: 0.5) : AppColors.glassBorder,
-            fillColor: _hovered ? AppColors.primary.withValues(alpha: 0.08) : AppColors.glassFill,
+            borderColor: _hovered ? context.colors.primary.withValues(alpha: 0.5) : context.colors.glassBorder,
+            fillColor: _hovered ? context.colors.primary.withValues(alpha: 0.08) : context.colors.glassFill,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(widget.tool.icon, size: 22, color: _hovered ? AppColors.primary : AppColors.textSecondary),
+                Icon(widget.tool.icon, size: 22, color: _hovered ? context.colors.primary : context.colors.textSecondary),
                 const SizedBox(height: 10),
                 Text(
                   widget.tool.label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: _hovered ? AppColors.primary : AppColors.textSecondary,
+                  style: AppTextStyles.bodySmall(context).copyWith(
+                    color: _hovered ? context.colors.primary : context.colors.textSecondary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

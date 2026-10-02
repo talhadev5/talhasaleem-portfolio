@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/app_nav_bar.dart';
+import '../../../../core/widgets/app_page_scaffold.dart';
 import '../widgets/about_section.dart';
 import '../widgets/certifications_section.dart';
 import '../widgets/contact_section.dart';
@@ -39,31 +40,41 @@ class _HomePageState extends State<HomePage> {
     SectionScrollRegistry.register('contact', _contactKey);
   }
 
+  @override
+  void dispose() {
+    SectionScrollRegistry.unregister('projects', _projectsKey);
+    SectionScrollRegistry.unregister('about', _aboutKey);
+    SectionScrollRegistry.unregister('experience', _experienceKey);
+    SectionScrollRegistry.unregister('skills', _skillsKey);
+    SectionScrollRegistry.unregister('contact', _contactKey);
+    super.dispose();
+  }
+
   void _scrollToContact() => SectionScrollRegistry.scrollTo('contact');
   void _scrollToProjects() => SectionScrollRegistry.scrollTo('projects');
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const AppNavBar(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            HeroSection(
-              onGetInTouch: _scrollToContact,
-              onScrollDown: _scrollToProjects,
-            ),
-            KeyedSubtree(key: _projectsKey, child: const ProjectsPreviewSection()),
-            KeyedSubtree(key: _aboutKey, child: const AboutSection()),
-            KeyedSubtree(key: _experienceKey, child: const ExperienceSection()),
-            const CertificationsSection(),
-            const EducationSection(),
-            KeyedSubtree(key: _skillsKey, child: const SkillsSection()),
-            const ToolsSection(),
-            KeyedSubtree(key: _contactKey, child: const ContactSection()),
-            const FooterSection(),
-          ],
-        ),
+    return AppPageScaffold(
+      body: Column(
+        children: [
+          HeroSection(
+            onGetInTouch: _scrollToContact,
+            onScrollDown: _scrollToProjects,
+          ),
+          KeyedSubtree(
+            key: _projectsKey,
+            child: const ProjectsPreviewSection(),
+          ),
+          KeyedSubtree(key: _aboutKey, child: const AboutSection()),
+          KeyedSubtree(key: _experienceKey, child: const ExperienceSection()),
+          const CertificationsSection(),
+          const EducationSection(),
+          KeyedSubtree(key: _skillsKey, child: const SkillsSection()),
+          const ToolsSection(),
+          KeyedSubtree(key: _contactKey, child: const ContactSection()),
+          const FooterSection(),
+        ],
       ),
     );
   }

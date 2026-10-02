@@ -1,6 +1,6 @@
 import 'dart:ui';
+import '../theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 
 /// A frosted glassmorphism panel used for cards throughout the site.
 class GlassCard extends StatelessWidget {
@@ -28,9 +28,9 @@ class GlassCard extends StatelessWidget {
         child: Container(
           padding: padding,
           decoration: BoxDecoration(
-            color: fillColor ?? AppColors.glassFill,
+            color: fillColor ?? context.colors.glassFill,
             borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(color: borderColor ?? AppColors.glassBorder, width: 1),
+            border: Border.all(color: borderColor ?? context.colors.glassBorder, width: 1),
           ),
           child: child,
         ),

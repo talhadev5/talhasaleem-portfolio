@@ -1,6 +1,6 @@
+import '../../../../core/theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/scroll_reveal.dart';
@@ -47,28 +47,28 @@ class _EducationCardState extends State<_EducationCard> {
         transform: Matrix4.translationValues(0, _hovered ? -3 : 0, 0),
         constraints: const BoxConstraints(maxWidth: 620),
         child: GlassCard(
-          borderColor: _hovered ? AppColors.primary.withValues(alpha: 0.5) : AppColors.glassBorder,
+          borderColor: _hovered ? context.colors.primary.withValues(alpha: 0.5) : context.colors.glassBorder,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.14),
+                  color: context.colors.primary.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.school_rounded, color: AppColors.primary, size: 24),
+                child: Icon(Icons.school_rounded, color: context.colors.primary, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.entry.degree, style: AppTextStyles.cardTitle.copyWith(fontSize: 17)),
+                    Text(widget.entry.degree, style: AppTextStyles.cardTitle(context).copyWith(fontSize: 17)),
                     const SizedBox(height: 4),
-                    Text(widget.entry.institution, style: AppTextStyles.cardSubtitle),
+                    Text(widget.entry.institution, style: AppTextStyles.cardSubtitle(context)),
                     const SizedBox(height: 8),
-                    Text(widget.entry.period, style: AppTextStyles.bodySmall),
+                    Text(widget.entry.period, style: AppTextStyles.bodySmall(context)),
                   ],
                 ),
               ),

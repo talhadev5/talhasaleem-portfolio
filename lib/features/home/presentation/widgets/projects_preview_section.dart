@@ -1,7 +1,7 @@
+import '../../../../core/theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/di/service_locator.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/scroll_reveal.dart';
@@ -31,10 +31,11 @@ class ProjectsPreviewSection extends StatelessWidget {
         .whereType<Project>()
         .toList();
     final columns = Responsive.value(context, mobile: 1, tablet: 2, desktop: 3);
+    final isDesktop = Responsive.isDesktop(context);
     final vPadding = Responsive.value<double>(context, mobile: 44, tablet: 56, desktop: 68);
 
     return SectionContainer(
-      color: AppColors.surface,
+      color: context.colors.surface,
       verticalPadding: vPadding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,16 +50,19 @@ class ProjectsPreviewSection extends StatelessWidget {
             builder: (context, constraints) {
               const gap = 24.0;
               final cardWidth = (constraints.maxWidth - gap * (columns - 1)) / columns;
+              // Bento touch on desktop: the first (most relevant) project
+              // spans two columns instead of every card being uniform.
+              final featuredWidth = isDesktop ? cardWidth * 2 + gap : cardWidth;
               return Wrap(
                 spacing: gap,
                 runSpacing: gap,
                 children: [
                   for (int i = 0; i < featured.length; i++)
                     SizedBox(
-                      width: cardWidth,
+                      width: i == 0 ? featuredWidth : cardWidth,
                       child: ScrollReveal(
                         delay: Duration(milliseconds: 70 * i),
-                        child: ProjectCard(project: featured[i]),
+                        child: ProjectCard(project: featured[i], featured: i == 0 && isDesktop),
                       ),
                     ),
                 ],

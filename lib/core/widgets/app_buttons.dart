@@ -1,8 +1,10 @@
+import '../theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 import '../theme/app_text_styles.dart';
 
-/// Electric blue/violet gradient CTA with a hover lift + glow, used for primary actions.
+/// Brand gradient (orange → teal) CTA with a hover lift + glow, used for
+/// primary actions. Text/icon render in [AppColors.onAccent] (near-black),
+/// not white — the bright accent fill fails WCAG AA against white text.
 class PrimaryButton extends StatefulWidget {
   const PrimaryButton({
     super.key,
@@ -40,24 +42,17 @@ class _PrimaryButtonState extends State<PrimaryButton> {
               ? const EdgeInsets.symmetric(horizontal: 14, vertical: 7.5)
               : const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color(0xFF3B82F6), // Electric blue
-                Color(0xFF8B5CF6), // Electric violet
-              ],
-            ),
+            gradient: context.colors.primaryGradient,
             borderRadius: BorderRadius.circular(widget.isCompact ? 8 : 12),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6366F1).withValues(alpha: _hovered ? 0.45 : 0.24),
+                color: context.colors.primary.withValues(alpha: _hovered ? 0.45 : 0.24),
                 blurRadius: _hovered ? 24 : 14,
                 offset: const Offset(0, 4),
               ),
               if (_hovered)
                 BoxShadow(
-                  color: AppColors.accentBlue.withValues(alpha: 0.25),
+                  color: context.colors.secondary.withValues(alpha: 0.25),
                   blurRadius: 16,
                   offset: const Offset(0, 2),
                 ),
@@ -68,15 +63,15 @@ class _PrimaryButtonState extends State<PrimaryButton> {
             children: [
               Text(
                 widget.label,
-                style: AppTextStyles.button.copyWith(
+                style: AppTextStyles.button(context).copyWith(
                   fontSize: widget.isCompact ? 12.0 : 14.5,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: context.colors.onAccent,
                 ),
               ),
               if (widget.icon != null) ...[
                 const SizedBox(width: 6),
-                Icon(widget.icon, size: widget.isCompact ? 13 : 17, color: Colors.white),
+                Icon(widget.icon, size: widget.isCompact ? 13 : 17, color: context.colors.onAccent),
               ],
             ],
           ),
@@ -126,17 +121,17 @@ class _SecondaryButtonState extends State<SecondaryButton> {
               : const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
           decoration: BoxDecoration(
             color: _hovered
-                ? AppColors.primary.withValues(alpha: 0.12)
-                : AppColors.glassFill,
+                ? context.colors.primary.withValues(alpha: 0.12)
+                : context.colors.glassFill,
             borderRadius: BorderRadius.circular(widget.isCompact ? 10 : 12),
             border: Border.all(
-              color: _hovered ? AppColors.accentViolet.withValues(alpha: 0.75) : AppColors.glassBorder,
+              color: _hovered ? context.colors.primary.withValues(alpha: 0.75) : context.colors.glassBorder,
               width: 1.1,
             ),
             boxShadow: _hovered
                 ? [
                     BoxShadow(
-                      color: AppColors.accentViolet.withValues(alpha: 0.22),
+                      color: context.colors.primary.withValues(alpha: 0.22),
                       blurRadius: 18,
                       offset: const Offset(0, 4),
                     ),
@@ -148,10 +143,10 @@ class _SecondaryButtonState extends State<SecondaryButton> {
             children: [
               Text(
                 widget.label,
-                style: AppTextStyles.button.copyWith(
+                style: AppTextStyles.button(context).copyWith(
                   fontSize: widget.isCompact ? 13.5 : 14.5,
                   fontWeight: FontWeight.w500,
-                  color: _hovered ? AppColors.textPrimary : AppColors.textSecondary,
+                  color: _hovered ? context.colors.textPrimary : context.colors.textSecondary,
                 ),
               ),
               if (widget.icon != null) ...[
@@ -159,7 +154,7 @@ class _SecondaryButtonState extends State<SecondaryButton> {
                 Icon(
                   widget.icon,
                   size: widget.isCompact ? 15 : 17,
-                  color: _hovered ? AppColors.accentBlue : AppColors.textSecondary,
+                  color: _hovered ? context.colors.secondary : context.colors.textSecondary,
                 ),
               ],
             ],

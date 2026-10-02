@@ -15,5 +15,15 @@ class ProjectModel extends Project {
     required super.techStack,
     required super.storeLinks,
     super.hasNoPublicLink = false,
+    super.websiteUrl,
+    super.githubUrl,
+    super.myContribution = '',
+    super.problem,
+    super.solution,
+    super.userJourneys = const [],
+    super.techDecisions = const [],
+    super.challenges = const [],
+    super.outcomes = const [],
+    super.screenshots = const [],
   });
 }

@@ -1,7 +1,7 @@
+import '../../../../core/theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/responsive.dart';
 
@@ -12,8 +12,8 @@ class FooterSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: AppColors.divider)),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: context.colors.divider)),
       ),
       padding: EdgeInsets.symmetric(
         horizontal: Responsive.pageHorizontalPadding(context).horizontal / 2,
@@ -28,7 +28,7 @@ class FooterSection extends StatelessWidget {
         spacing: 16,
         runSpacing: 16,
         children: [
-          Text('© ${DateTime.now().year} ${AppConstants.fullName}. All rights reserved.', style: AppTextStyles.bodySmall),
+          Text('© ${DateTime.now().year} ${AppConstants.fullName}. All rights reserved.', style: AppTextStyles.bodySmall(context)),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -69,7 +69,7 @@ class _FooterIconState extends State<_FooterIcon> {
         child: AnimatedScale(
           duration: const Duration(milliseconds: 160),
           scale: _hovered ? 1.15 : 1.0,
-          child: Icon(widget.icon, size: 18, color: _hovered ? AppColors.primary : AppColors.textMuted),
+          child: Icon(widget.icon, size: 18, color: _hovered ? context.colors.primary : context.colors.textMuted),
         ),
       ),
     );
@@ -84,16 +84,16 @@ class _FlutterBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(
-        color: AppColors.glassFill,
+        color: context.colors.glassFill,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.glassBorder),
+        border: Border.all(color: context.colors.glassBorder),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.flutter_dash_rounded, size: 14, color: AppColors.primary),
+          Icon(Icons.flutter_dash_rounded, size: 14, color: context.colors.primary),
           const SizedBox(width: 6),
-          Text('Built with Flutter', style: AppTextStyles.bodySmall),
+          Text('Built with Flutter', style: AppTextStyles.bodySmall(context)),
         ],
       ),
     );

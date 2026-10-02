@@ -1,11 +1,11 @@
 {
-    "name": "talha_portfilo",
-    "short_name": "talha_portfilo",
+    "name": "Talha Saleem — Senior Flutter Developer",
+    "short_name": "Talha Saleem",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#030209",
+    "theme_color": "#2F8EFF",
+    "description": "Senior Flutter Developer with 4+ years of experience and 30+ production apps shipped across fintech, health, fleet and e-commerce.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

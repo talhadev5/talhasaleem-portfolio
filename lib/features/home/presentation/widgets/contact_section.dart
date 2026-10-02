@@ -1,8 +1,8 @@
+import '../../../../core/theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../../core/utils/responsive.dart';
 import '../../../../core/widgets/scroll_reveal.dart';
@@ -18,7 +18,7 @@ class ContactSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDesktop = Responsive.isDesktop(context);
     return SectionContainer(
-      color: AppColors.surface,
+      color: context.colors.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -48,7 +48,7 @@ class ContactSection extends StatelessWidget {
                       const SizedBox(height: 24),
                       Text(
                         'Available for freelance engagements and full-time senior roles.',
-                        style: AppTextStyles.bodySmall,
+                        style: AppTextStyles.bodySmall(context),
                       ),
                     ],
                   ),
@@ -105,15 +105,15 @@ class _ContactLinkState extends State<_ContactLink> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: _hovered ? AppColors.primary.withValues(alpha: 0.16) : AppColors.glassFill,
+                  color: _hovered ? context.colors.primary.withValues(alpha: 0.16) : context.colors.glassFill,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(widget.icon, size: 18, color: _hovered ? AppColors.primary : AppColors.textSecondary),
+                child: Icon(widget.icon, size: 18, color: _hovered ? context.colors.primary : context.colors.textSecondary),
               ),
               const SizedBox(width: 14),
               Text(
                 widget.label,
-                style: AppTextStyles.body.copyWith(color: _hovered ? AppColors.primary : AppColors.textPrimary),
+                style: AppTextStyles.body(context).copyWith(color: _hovered ? context.colors.primary : context.colors.textPrimary),
               ),
             ],
           ),

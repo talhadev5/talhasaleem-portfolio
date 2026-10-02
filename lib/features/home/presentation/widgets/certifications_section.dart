@@ -1,6 +1,6 @@
+import '../../../../core/theme/app_theme_x.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/scroll_reveal.dart';
 import '../../../../core/widgets/section_container.dart';
 import '../../../../core/widgets/section_header.dart';
@@ -15,7 +15,7 @@ class CertificationsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SectionContainer(
-      color: AppColors.surface,
+      color: context.colors.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
