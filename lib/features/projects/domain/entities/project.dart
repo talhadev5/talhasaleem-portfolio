@@ -101,6 +101,8 @@ class Project extends Equatable {
     this.challenges = const [],
     this.outcomes = const [],
     this.screenshots = const [],
+    this.logoAssetPath,
+    this.bannerAssetPath,
   });
 
   final String id;
@@ -115,6 +117,18 @@ class Project extends Equatable {
   final List<String> features;
   final List<String> techStack;
   final List<StoreLink> storeLinks;
+
+  /// Real app/brand logo for the card icon badge. Null falls back to the
+  /// generic gradient-and-icon placeholder — only set when a real logo
+  /// asset exists for this project.
+  final String? logoAssetPath;
+
+  /// A real marketing/promo banner (e.g. an App Store feature graphic),
+  /// used as the case-study hero visual for projects with no individual
+  /// in-app screenshots yet. [logoAssetPath], when also set, overlays as
+  /// a small badge on top of it. Screenshots still take priority over
+  /// this when both exist.
+  final String? bannerAssetPath;
 
   /// True for apps like SympAi that are showcase-only, no public store link.
   final bool hasNoPublicLink;
@@ -180,5 +194,7 @@ class Project extends Equatable {
         challenges,
         outcomes,
         screenshots,
+        logoAssetPath,
+        bannerAssetPath,
       ];
 }

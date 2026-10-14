@@ -81,7 +81,7 @@ class _ProjectCardState extends State<ProjectCard> {
                       children: [
                         Row(
                           children: [
-                            _AppIconPlaceholder(name: project.name, hovered: _hovered, featured: featured),
+                            _AppIcon(project: project, hovered: _hovered, featured: featured),
                             const Spacer(),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -137,31 +137,45 @@ class _ProjectCardState extends State<ProjectCard> {
   }
 }
 
-class _AppIconPlaceholder extends StatelessWidget {
-  const _AppIconPlaceholder({required this.name, required this.hovered, this.featured = false});
-  final String name;
+/// Card icon badge. Renders the project's real logo asset when one
+/// exists; otherwise falls back to the generic gradient-and-icon
+/// placeholder used for every project without a captured brand mark.
+class _AppIcon extends StatelessWidget {
+  const _AppIcon({required this.project, required this.hovered, this.featured = false});
+  final Project project;
   final bool hovered;
   final bool featured;
 
   @override
   Widget build(BuildContext context) {
     final size = featured ? 56.0 : 48.0;
+    final logo = project.logoAssetPath;
     return Semantics(
-      label: '$name app icon',
+      label: '${project.name} app icon',
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),
         width: size,
         height: size,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: context.colors.primaryGradient.colors.map((c) => c.withValues(alpha: hovered ? 0.95 : 0.75)).toList(),
-          ),
+          gradient: logo == null
+              ? LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: context.colors.primaryGradient.colors.map((c) => c.withValues(alpha: hovered ? 0.95 : 0.75)).toList(),
+                )
+              : null,
+          boxShadow: logo != null && hovered
+              ? [BoxShadow(color: context.colors.primary.withValues(alpha: 0.35), blurRadius: 16, offset: const Offset(0, 4))]
+              : null,
         ),
         alignment: Alignment.center,
-        child: Icon(Icons.smartphone_rounded, size: featured ? 26 : 22, color: context.colors.onAccent),
+        child: logo == null
+            ? Icon(Icons.smartphone_rounded, size: featured ? 26 : 22, color: context.colors.onAccent)
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.asset(logo, width: size, height: size, fit: BoxFit.cover),
+              ),
       ),
     );
   }

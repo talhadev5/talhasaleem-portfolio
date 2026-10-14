@@ -124,6 +124,56 @@ class _CoverVisual extends StatelessWidget {
       );
     }
 
+    final logo = project.logoAssetPath;
+    final banner = project.bannerAssetPath;
+
+    if (banner != null) {
+      // A real marketing banner, with the brand logo overlaid as a small
+      // corner badge so the mark is still identifiable at a glance.
+      return AspectRatio(
+        aspectRatio: 4 / 3,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: context.colors.glassBorder),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [context.colors.surfaceElevated, context.colors.surface],
+            ),
+          ),
+          padding: const EdgeInsets.all(18),
+          child: Stack(
+            children: [
+              Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Image.asset(banner, fit: BoxFit.contain),
+                ),
+              ),
+              if (logo != null)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Container(
+                    width: 52,
+                    height: 52,
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: context.colors.surfaceElevated,
+                      border: Border.all(color: context.colors.glassBorder),
+                      boxShadow: context.shadows.card,
+                    ),
+                    child: ClipOval(child: Image.asset(logo, fit: BoxFit.cover)),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final initial = project.name.isNotEmpty ? project.name[0].toUpperCase() : '?';
     return AspectRatio(
       aspectRatio: 4 / 3,
@@ -145,20 +195,34 @@ class _CoverVisual extends StatelessWidget {
               height: 160,
               decoration: BoxDecoration(shape: BoxShape.circle, gradient: context.colors.glow(opacity: 0.3)),
             ),
-            Container(
-              width: 110,
-              height: 110,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
-                gradient: context.colors.primaryGradient,
-                boxShadow: [BoxShadow(color: context.colors.primary.withValues(alpha: 0.35), blurRadius: 32, offset: const Offset(0, 14))],
+            if (logo != null)
+              Container(
+                width: 150,
+                height: 150,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28),
+                  color: context.colors.surfaceElevated,
+                  border: Border.all(color: context.colors.glassBorder),
+                  boxShadow: [BoxShadow(color: context.colors.primary.withValues(alpha: 0.2), blurRadius: 32, offset: const Offset(0, 14))],
+                ),
+                child: Image.asset(logo, fit: BoxFit.contain),
+              )
+            else
+              Container(
+                width: 110,
+                height: 110,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28),
+                  gradient: context.colors.primaryGradient,
+                  boxShadow: [BoxShadow(color: context.colors.primary.withValues(alpha: 0.35), blurRadius: 32, offset: const Offset(0, 14))],
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  initial,
+                  style: AppTextStyles.display(context).copyWith(fontSize: 48, color: context.colors.onAccent),
+                ),
               ),
-              alignment: Alignment.center,
-              child: Text(
-                initial,
-                style: AppTextStyles.display(context).copyWith(fontSize: 48, color: context.colors.onAccent),
-              ),
-            ),
             if (project.techStack.isNotEmpty)
               Positioned(
                 bottom: 22,

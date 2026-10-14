@@ -102,6 +102,96 @@ const List<Project> _projects = [
       ProjectScreenshot(assetPath: 'assets/images/projects/roll-off-rolodex_9_navigation.jpg', caption: 'Turn-by-turn navigation to the job site, with live ETA and distance.'),
       ProjectScreenshot(assetPath: 'assets/images/projects/roll-off-rolodex_4_search.jpg', caption: 'Instant search across every scheduled job.'),
     ],
+    logoAssetPath: 'assets/images/projects/roll-off-rolodex_logo.png',
+  ),
+  ProjectModel(
+    id: 'pepal-pos',
+    name: 'Pepal POS',
+    category: ProjectCategory.businessManagement,
+    tagline: 'Point-of-sale app for lottery operators, across mobile and web',
+    description:
+        'Flutter point-of-sale app for lottery operators: sellers pick a lottery, enter numbers against straight-'
+        'order, pair and 3/4/5-digit lotto bet types, stake an amount per line and print a thermal receipt — all '
+        'under a fixed Super Admin → Admin → Manager → Seller role chain enforced throughout the app, not just on '
+        'paper. Shipped to Android and iOS, then retrofitted — not rewritten — into an installable web PWA.',
+    features: [
+      'Two ticket-entry layouts — Compact grid and Detailed trading-terminal — sharing one BLoC',
+      'Branded receipts: one on-screen preview and a matching ESC/POS thermal-printer output',
+      'Winning-number declaration with a full payout preview before it\'s confirmed',
+      'PIN-gated app lock backed by Keychain/Keystore, with per-device session revoke',
+      'Per-user management dashboard scoped to each role\'s own permissions',
+      'Seller dashboard with live sales totals, commission and win/payout tracking, plus result notifications',
+      'Installable web PWA built from the same mobile codebase',
+    ],
+    techStack: ['Flutter', 'BLoC', 'Dio', 'Socket.IO', 'flutter_secure_storage', 'Bluetooth Thermal Printing', 'PWA'],
+    storeLinks: [],
+    hasNoPublicLink: true,
+    problem:
+        'Lottery operators handing sellers a point-of-sale tool need a fixed, enforced chain of who can configure '
+        'what — payout multipliers, receipt branding, reporting lines — while sellers themselves just need a '
+        'fast, reliable way to enter bets and print a receipt, on whatever device they happen to have, mobile or '
+        'a browser.',
+    solution:
+        'One Flutter codebase enforcing the Super Admin → Admin → Manager → Seller hierarchy throughout, with two '
+        'interchangeable ticket-entry layouts reading and writing the same BLoC, receipts built from one shared '
+        'data model for both the on-screen preview and the Bluetooth thermal print output, a dry-run payout '
+        'preview before any winning numbers are confirmed, and — later — the same codebase retrofitted into an '
+        'installable web PWA rather than rebuilt.',
+    myContribution:
+        'Built the app iteratively, screen by screen, against the live backend API the whole way through — every '
+        'feature its own repository and bloc/cubit, the enforced role hierarchy, the dual ticket-entry layouts, '
+        'the receipt system (on-screen and ESC/POS thermal), the winning-numbers payout-preview flow, the PIN '
+        'security layer, and the later retrofit to an installable PWA.',
+    techDecisions: [
+      TechDecision(title: 'BLoC per feature', rationale: 'Every feature gets its own repository and bloc/cubit instead of a shared god-repository — a few simple screens like PIN entry skip the bloc layer entirely and talk to their repository directly, matching the pattern already used elsewhere rather than forcing ceremony on a three-field form.'),
+      TechDecision(title: 'Dio with one 401 handler', rationale: 'All network traffic runs through a single ApiService, so there\'s one place that decides what a 401 means — refresh and retry once, or clear the session — except PIN unlock and PIN login, which deliberately bypass that escalation since a 401 there just means "wrong PIN."'),
+      TechDecision(title: 'flutter_secure_storage', rationale: 'The PIN lock and the signed-in device list are backed by Keychain/Keystore rather than plain prefs, so a revoked session or a forced logout is backed by the platform\'s own secure storage.'),
+      TechDecision(title: 'print_bluetooth_thermal + esc_pos_utils_plus', rationale: 'The on-screen receipt and the raw ESC/POS bytes sent to the thermal printer are built from the same ReceiptData, so what a seller reviews is exactly what prints.'),
+    ],
+    userJourneys: [
+      UserJourney(title: 'Selling a ticket', steps: [
+        'Seller picks a lottery and a bet type — straight order, pairs, or a 3/4/5-digit lotto variant',
+        'Numbers are entered in either the Compact grid or the Detailed trading-terminal layout, both writing the same StartSellingBloc',
+        'A stake is set per line and added to the active ticket slip',
+        'The receipt is reviewed on-screen, then printed to a Bluetooth thermal printer from the same data',
+      ]),
+      UserJourney(title: 'Declaring winning numbers', steps: [
+        'Admin enters a draw\'s winning numbers',
+        'The app runs a dry-run payout preview — every matching ticket, total exposure, the full multiplier breakdown',
+        'Admin reviews the preview, including whether a lottery is using the org\'s default multipliers or its own custom rates',
+        'A separate confirm step commits and broadcasts the result',
+      ]),
+    ],
+    challenges: [
+      Challenge(
+        challenge: 'A fresh install\'s very first login reported "Session expired" immediately, despite the login API call itself returning a real 200.',
+        solution: 'Traced to a race condition — the user object notified its listeners before the new token finished writing to secure storage, so an immediate authenticated call went out on a stale leftover token, 401\'d, lost the same race on refresh, and the failure handler correctly cleared a session it was never actually looking at. Fixed by firing the notification only after every write completes.',
+      ),
+      Challenge(
+        challenge: 'Every login from the web build failed with "Invalid x-device-id header," while Android and iOS worked fine.',
+        solution: 'The web branch had no hardware ID to send and was falling back to the raw browser user-agent string, which the backend\'s ID-shaped validation rejected outright. Fixed by generating a UUID v4 once per browser and persisting it in localStorage, so it behaves like identifierForVendor does on iOS.',
+      ),
+      Challenge(
+        challenge: 'The active ticket slip needed to grow with each line added, cap out around four lines, and never push the page itself into scrolling — while everything above it varied in height with what was selected, causing intermittent RenderFlex overflow errors.',
+        solution: 'Wrapped the slip in Expanded so it can never claim more than what\'s actually left on screen, with an inner ConstrainedBox capping it around four lines when more room is free — whichever bound is smaller wins, and only the list scrolls, never the page.',
+      ),
+    ],
+    outcomes: [
+      'Shipped to Android and iOS, then retrofitted — not rewritten — into an installable web PWA from the same codebase.',
+      'Delivered a fixed, enforced four-role hierarchy (Super Admin, Admin, Manager, Seller) with permission-scoped management screens for each.',
+      'Built a receipt system where the on-screen preview and the Bluetooth thermal print output are generated from one shared data model.',
+    ],
+    screenshots: [
+      ProjectScreenshot(assetPath: 'assets/images/projects/pepal-pos_1_dashboard.jpg', caption: 'Seller dashboard — live sales total, commission, win/payout totals and recent transactions.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/pepal-pos_2_start-selling.jpg', caption: 'Ticket entry — bet-type tabs, ball input and the active ticket slip with running total.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/pepal-pos_3_receipt.jpg', caption: 'Branded receipt with QR code, built from the same data as the thermal print.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/pepal-pos_4_sale-report.jpg', caption: 'Sale Report — total sold, winnings paid/unpaid, deposits, withdrawals and net sales by date range.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/pepal-pos_5_winning-numbers.jpg', caption: 'Winning Numbers — searchable history of declared results per lottery.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/pepal-pos_6_winning-clients.jpg', caption: 'Winning Clients — payout clearance pace, per-ticket disbursement status and receipt replay.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/pepal-pos_7_settings-profile.jpg', caption: 'Settings — seller profile, role, branch and POS terminal ID, with session and PIN security.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/pepal-pos_8_settings-hardware.jpg', caption: 'Settings — Compact/Detailed ticket-entry toggle, auto-print and scan audio feedback.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/pepal-pos_9_menu.jpg', caption: 'Main navigation — Dashboard, Lotteries, Start Selling, Winning Numbers, Winning Clients and Sale Report.'),
+    ],
   ),
   ProjectModel(
     id: 'global-wedlock',
@@ -148,6 +238,8 @@ const List<Project> _projects = [
       'Shipped to Google Play with tiered subscription plans live.',
       'Delivered real-time chat and WebRTC voice/video calling in production.',
     ],
+    logoAssetPath: 'assets/images/projects/global-wedlock_logo.png',
+    bannerAssetPath: 'assets/images/projects/global-wedlock_banner.jpg',
   ),
   ProjectModel(
     id: 'macrofit',
@@ -369,6 +461,7 @@ const List<Project> _projects = [
       'Built for both iOS and Android.',
       'Delivered unified real-estate and trading investment tracking in one platform.',
     ],
+    logoAssetPath: 'assets/images/projects/gratis_logo.png',
   ),
   ProjectModel(
     id: 'gwallet',
@@ -413,6 +506,7 @@ const List<Project> _projects = [
       'Built for both iOS and Android.',
       'Delivered combined wallet, investment and transaction-history management in one app.',
     ],
+    logoAssetPath: 'assets/images/projects/gwallet_logo.jpg',
   ),
   ProjectModel(
     id: 'tikane',
@@ -615,6 +709,7 @@ const List<Project> _projects = [
       'Shipped to Google Play.',
       'Delivered an offline-first calculator requiring no account or network connection.',
     ],
+    logoAssetPath: 'assets/images/projects/poultry-calculator_logo.png',
   ),
   ProjectModel(
     id: 'long-island-volleyball',
@@ -741,30 +836,47 @@ const List<Project> _projects = [
       'Shipped to Google Play.',
       'Delivered a full catalog-to-checkout eCommerce flow.',
     ],
+    logoAssetPath: 'assets/images/projects/hibuy_logo.png',
+    bannerAssetPath: 'assets/images/projects/hibuy_banner.jpg',
   ),
   ProjectModel(
     id: 'niwali',
     name: 'Niwali App',
-    category: ProjectCategory.lifestyle,
-    tagline: 'Lifestyle & community platform',
+    category: ProjectCategory.ecommerce,
+    tagline: 'Wellness & supplement marketplace app',
     description:
-        'Lifestyle and community platform connecting users around shared interests, profiles and local '
-        'discovery.',
+        'Mobile eCommerce marketplace for wellness and supplement products — featured collections, product '
+        'detail and pricing, a cart with quantity controls, and checkout.',
     features: [
-      'Profile-based community discovery',
-      'In-app messaging',
-      'Local content and interest feeds',
+      'Featured product collections and catalog browsing',
+      'Cart with quantity controls and running total',
+      'Checkout flow',
+      'User profile management',
     ],
     techStack: ['Flutter', 'Provider', 'Firebase'],
     storeLinks: [
       StoreLink(platform: StorePlatform.android, url: 'https://play.google.com/store/apps/details?id=com.mtalhadev.niwali_app'),
     ],
-    problem: 'Users wanted a lightweight way to discover and connect with others around shared interests and local content.',
-    solution: 'A community platform with profile-based discovery, in-app messaging, and local content and interest feeds.',
-    myContribution: 'Built the Flutter/Provider app with Firebase-backed discovery and messaging, shipped to Google Play.',
+    problem: 'Shoppers browsing wellness and supplement products need a simple, fast catalog-to-cart-to-checkout flow rather than a cluttered general marketplace.',
+    solution: 'A focused wellness-marketplace app: featured collections, clear product cards with pricing, a cart with quantity controls, and checkout.',
+    myContribution: 'Built the Flutter/Provider app covering the product catalog, cart and checkout flow, and profile management, shipped to Google Play.',
+    userJourneys: [
+      UserJourney(title: 'Buying a product', steps: [
+        'Browse the Featured Collection on the home screen',
+        'Open a product and add it to the cart',
+        'Review quantities and the estimated total in the cart',
+        'Check out',
+      ]),
+    ],
     outcomes: [
       'Shipped to Google Play.',
-      'Delivered profile-based discovery with in-app messaging.',
+      'Delivered a complete catalog-to-checkout shopping flow for wellness products.',
+    ],
+    logoAssetPath: 'assets/images/projects/niwali_logo.png',
+    bannerAssetPath: 'assets/images/projects/niwali_banner.jpg',
+    screenshots: [
+      ProjectScreenshot(assetPath: 'assets/images/projects/niwali_2_cart.jpg', caption: 'Cart — quantity controls per item and an estimated order total.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/niwali_3_profile.jpg', caption: 'Profile — name, email and address.'),
     ],
   ),
   ProjectModel(
@@ -779,6 +891,8 @@ const List<Project> _projects = [
       'Multi-account balance tracking',
       'Expense categorization and reports',
       'Simple, offline-friendly data entry',
+      'Shareable digital business-card templates',
+      'PIN-protected company profile setup',
     ],
     techStack: ['Flutter', 'Provider', 'Local Storage'],
     storeLinks: [
@@ -791,6 +905,8 @@ const List<Project> _projects = [
       'Shipped to Google Play.',
       'Delivered offline-friendly multi-account expense tracking and reporting.',
     ],
+    logoAssetPath: 'assets/images/projects/account-manager_logo.png',
+    bannerAssetPath: 'assets/images/projects/account-manager_banner.jpg',
   ),
   ProjectModel(
     id: 'tailor-app',

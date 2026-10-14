@@ -25,5 +25,7 @@ class ProjectModel extends Project {
     super.challenges = const [],
     super.outcomes = const [],
     super.screenshots = const [],
+    super.logoAssetPath,
+    super.bannerAssetPath,
   });
 }

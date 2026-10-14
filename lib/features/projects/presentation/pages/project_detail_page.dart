@@ -7,6 +7,7 @@ import '../../../../core/widgets/app_buttons.dart';
 import '../../../../core/widgets/app_nav_bar.dart';
 import '../../../../core/widgets/app_page_scaffold.dart';
 import '../../domain/entities/project.dart';
+import '../widgets/case_study/cs_back_fab.dart';
 import '../widgets/case_study/cs_challenges.dart';
 import '../widgets/case_study/cs_closing.dart';
 import '../widgets/case_study/cs_contribution.dart';
@@ -102,7 +103,12 @@ class _ProjectDetailPageState extends State<ProjectDetailPage> {
     Widget section(String id, Widget child) => KeyedSubtree(key: _keyFor(id), child: child);
 
     return AppPageScaffold(
-      overlay: isDesktop ? CsSectionNavRail(sections: sections) : null,
+      overlay: Stack(
+        children: [
+          if (isDesktop) CsSectionNavRail(sections: sections),
+          const CsBackFab(),
+        ],
+      ),
       body: Column(
         children: [
           CsHero(project: project),
