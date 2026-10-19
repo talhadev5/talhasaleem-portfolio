@@ -48,7 +48,24 @@ class CsHero extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      Text(project.name, style: AppTextStyles.h1(context)),
+                      Row(
+                        children: [
+                          if (project.logoAssetPath != null) ...[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.asset(
+                                project.logoAssetPath!,
+                                width: 64,
+                                height: 64,
+                                fit: BoxFit.contain,
+                                semanticLabel: '${project.name} app icon',
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                          ],
+                          Expanded(child: Text(project.name, style: AppTextStyles.h1(context))),
+                        ],
+                      ),
                       const SizedBox(height: 14),
                       ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 540),

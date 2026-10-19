@@ -569,6 +569,16 @@ const List<Project> _projects = [
       'Built for a US-based client, for both iOS and Android.',
       'Delivered a three-panel admin/agent/customer financial platform with OTP-secured transactions and a working referral system.',
     ],
+    bannerAssetPath: 'assets/images/projects/tikane_banner.png',
+    screenshots: [
+      ProjectScreenshot(assetPath: 'assets/images/projects/tikane_1_splash.png', caption: 'Ti Kanè — simple, secure and instant wallet payments.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/tikane_2_dashboard.png', caption: 'Dashboard — wallet balance, quick actions and recent transactions.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/tikane_3_transfer.png', caption: 'Transfer funds — send to MonCash or another Ti Kanè wallet.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/tikane_4_receipt.png', caption: 'Payment receipt — transaction details and receipt sharing.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/tikane_5_add-funds.png', caption: 'Add funds — enter an amount or select a quick amount to generate an OTP.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/tikane_6_otp.png', caption: 'OTP verification — copy or share a one-time code with an agent to add funds.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/tikane_7_history.png', caption: 'Payment history — filter sent, received and withdrawal transactions.'),
+    ],
   ),
   ProjectModel(
     id: 'munafa',
@@ -681,6 +691,14 @@ const List<Project> _projects = [
     outcomes: [
       'Built for both iOS and Android.',
       'Delivered offline-first daily hydration tracking with personalized reminders.',
+    ],
+    logoAssetPath: 'assets/images/projects/water-tracker_logo.png',
+    screenshots: [
+      ProjectScreenshot(assetPath: 'assets/images/projects/water-tracker_1_dashboard.png', caption: 'Dashboard — daily water intake, hydration target and quick logging.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/water-tracker_2_daily-goal.png', caption: 'Daily goal — adjust your hydration target or choose a recommended amount.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/water-tracker_5_reminders.png', caption: 'Reminders — notification frequency, smart reminders and scheduled alerts.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/water-tracker_4_analytics.png', caption: 'Analytics — daily progress, intake over time and weekly averages.'),
+      ProjectScreenshot(assetPath: 'assets/images/projects/water-tracker_3_log-water.png', caption: 'Log water — select a serving size and track recent drinks.'),
     ],
   ),
 
